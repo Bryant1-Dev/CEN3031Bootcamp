@@ -8,11 +8,11 @@ var listingData, server;
 
 var requestHandler = function(request, response) {
   var parsedUrl = url.parse(request.url);
-  console.log(parsedUrl.pathname);
+  //console.log(parsedUrl.pathname);
   if(request.method === "GET" && parsedUrl.pathname === '/listings') {
   	response.statusCode = '200';
 
-  	console.log("Successful entrance!");
+  	//console.log("Successful entrance!");
   	/*response.writeHead(200, {"Content-Type": "text/html"});
   	response.write('<!DOCTYPE "html">');
   	response.write("<html>");
