@@ -8,7 +8,31 @@ var listingData, server;
 
 var requestHandler = function(request, response) {
   var parsedUrl = url.parse(request.url);
+  console.log(parsedUrl.pathname);
+  if(request.method === "GET" && parsedUrl.pathname === '/listings') {
+  	response.statusCode = '200';
 
+  	console.log("Successful entrance!");
+  	/*response.writeHead(200, {"Content-Type": "text/html"});
+  	response.write('<!DOCTYPE "html">');
+  	response.write("<html>");
+  	response.write("<head>");
+  	response.write("<title>Hello World Page</title>");
+  	response.write("</head>");
+  	response.write("<body>");
+  	response.write(listingData);
+  	response.write("</body>");
+  	response.write("</html>");*/
+  	response.writeHead(200, {"Content-Type": "application/json"});
+  	response.write(listingData);
+  	
+  }
+  else {
+  	response.statusCode = '404';
+  	response.write("Bad gateway error")
+  }
+
+  response.end();
   /*
     Your request handler should send listingData in the JSON format as a response if a GET request 
     is sent to the '/listings' path. Otherwise, it should send a 404 error. 
@@ -38,14 +62,20 @@ fs.readFile('listings.json', 'utf8', function(err, data) {
    */
 
     //Check for errors
-  
+  	if (err) throw err;
 
    //Save the sate in the listingData variable already defined
-  
+  listingData = data;
 
   //Creates the server
-  
+  server = http.createServer(requestHandler);
   //Start the server
-
+  server.listen(port,  function() {
+  	console.log('Server listening on http://127.0.0.1:' + port);
+  	//console.log('JSON data: ' + listingData);
+  });
+  /*Note, this can also be accomplished through arrow function:
+	server.on('request', (response, request) => {} );
+  */
 
 });
