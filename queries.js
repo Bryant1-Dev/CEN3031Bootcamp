@@ -2,6 +2,9 @@
 var mongoose = require('mongoose');
 var Listing = require('./ListingSchema');
 var config = require('./config');
+
+const util = require('util')
+
 /* Connect to your database using mongoose - remember to keep your key secret*/
 mongoose.connect(config.db.uri, {useNewUrlParser: true});
 var database = mongoose.connection;
@@ -51,7 +54,7 @@ var retrieveAllListings = function() {
    */
    Listing.find({}, function(error, listings) {
       if(error) throw error;
-      console.log(listings);
+      console.log(util.inspect(listings, { maxArrayLength: null }))
    })
 };
 
