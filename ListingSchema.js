@@ -8,6 +8,13 @@ var mongoose = require('mongoose'),
   */
 var listingSchema = new Schema({
   /* Your code for a schema here */ 
+  code: {type: String, required: true},
+  name: {type: String, required: true},
+  coordinates: {latitude: Number, longitude: Number},
+  address: String,
+  created_at: Date,
+  updated_at: Date
+
   //Check out - https://mongoosejs.com/docs/guide.html
 
 });
@@ -17,6 +24,26 @@ var listingSchema = new Schema({
 */
 listingSchema.pre('save', function(next) {
   /* your code here */
+  var currDate = new Date();
+  this.updated_at = currDate;
+  if(!this.created_at) this.created_at = currDate;
+  /*
+	Pre middleware functions are executed one after another, when each middleware calls next
+	However, calling next does not stop the rest of the code i nyour middleware function from executing,
+	using the early retrun patern allows you to prevent the rest of your middleware function from running,
+	when you call next.
+
+Example: return next();
+
+	This can be used in in error handling. When you call next with a paramter it is assumed to be an error
+	Example:
+	const err = new Error('Errot Text');
+	next(err);
+	****End example****
+	One can also simply throw the error or use promises/await to handle the error.
+  */
+
+  next(); 
 });
 
 /* Use your schema to instantiate a Mongoose model */
