@@ -2,7 +2,8 @@
 /* Dependencies */
 var mongoose = require('mongoose'), 
     Listing = require('../models/listings.server.model.js'),
-    coordinates = require('./coordinates.server.controller.js');
+    coordinates = require('./coordinates.server.controller.js'),
+    util = require('util');
     
 /*
   In this file, you should use Mongoose queries in order to retrieve/add/remove/update listings.
@@ -54,14 +55,34 @@ exports.read = function(req, res) {
 };
 
 /* Update a listing - note the order in which this function is called by the router*/
-exports.update = function(req, res) {
+ exports.update = function(req, res) {
   var listing = req.listing;
-
+  
   /* Replace the listings's properties with the new properties found in req.body */
- 
+  //code, name, address, coordinates
+  //console.log(req.body);
+  listing.name = req.body.name;
+  listing.code = req.body.code;
+
+  
   /*save the coordinates (located in req.results if there is an address property) */
- 
+  if(req.results) {
+    listing.coordinates = {
+      latitude: req.results.lat, 
+      longitude: req.results.lng
+    };
+  }
   /* Save the listing */
+  listing.save(function(err) {
+    if(err) {
+      console.log(err);
+      res.status(400).send(err);
+    } else {
+      res.json(listing);
+      console.log(listing);
+      console.log("Updated successfully");
+    }
+  });
 
 };
 
@@ -69,13 +90,38 @@ exports.update = function(req, res) {
 exports.delete = function(req, res) {
   var listing = req.listing;
 
-  /* Add your code to remove the listins */
-
+  /* Add your code to remove the listings */
+  listing.remove(function(error) {
+    if (error) {
+      console.log(error);
+      res.status(400).send(error);
+    } else {
+      res.json(listing);
+      console.log(listing);
+      console.log("Deleted successfully");
+  }
+  });
+  /*Listing.deleteOne(listing, function(error) {
+    if (error) {
+        console.log(error);
+        res.status(400).send(error);
+    } else {
+    res.json(listing);
+    console.log(listing);
+    console.log("Deleted successfully");
+  }
+  })*/
 };
 
 /* Retreive all the directory listings, sorted alphabetically by listing code */
 exports.list = function(req, res) {
   /* Add your code */
+  Listing.find({}, function(error, listings) {
+      if(error) throw error;
+      res.json(listings.sort( (a, b) => (a.code > b.code) ? 1 : -1));
+      /*res.json(util.inspect(listings.sort(a, b) => (a.code > b.code) ? 1 : -1,
+       { maxArrayLength: null }))*/
+  });
 };
 
 /* 
